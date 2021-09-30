@@ -16,10 +16,10 @@ import java.util.logging.Logger;
  */
 public class ProductQueue<T> {
     private Queue<T> items = new LinkedList<>();
-    private int compacity = 3;
+    private int compacity = 5;
 
     public ProductQueue() {
-        for(int i=1; i<=2; i++) {
+        for(int i=1; i<=3; i++) {
             items.add((T)("Number " + i));
         }
     }
@@ -41,9 +41,8 @@ public class ProductQueue<T> {
         this.compacity = compacity;
     }
     
-    public synchronized void Put(T value) {
-        
-        while(items.size() == compacity) {
+    public synchronized void put(T value) {
+        while(items.size() >= compacity) {
             System.out.println("Queue fulled");
             try {
                 wait();
@@ -54,11 +53,14 @@ public class ProductQueue<T> {
         items.add(value);
         System.out.println("Add " + value);
         System.out.println("The number of products: " + getSizeItems());
-        System.out.println("Compacity of products: " + getCompacity());
+//        System.out.println("Compacity of products: " + getCompacity());
+        System.out.println("---------------------------------------------------------------------------");
+
         notifyAll();
     }
     
-    public synchronized void Take() {
+    public synchronized void take() {
+        System.out.print(Thread.currentThread().getName() + " is handle: ");
         while(items.size()==0) {
             System.out.println("Queue empty");
             try {
@@ -69,6 +71,7 @@ public class ProductQueue<T> {
         }
         System.out.println("Remove " + items.poll());
         System.out.println("The number of products: " + getSizeItems());
+        System.out.println("---------------------------------------------------------------------------");
         notifyAll();
     }
     

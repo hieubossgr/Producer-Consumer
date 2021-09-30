@@ -5,12 +5,16 @@
  */
 package producer.consumer;
 
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author hieub
  */
 public class Consumer implements Runnable{
-    private ProductQueue<String> productQueue;
+    private final ProductQueue<String> productQueue;
 
     public Consumer(ProductQueue<String> productQueue) {
         this.productQueue = productQueue;
@@ -18,10 +22,15 @@ public class Consumer implements Runnable{
     
     @Override
     public void run() {
-        System.out.println("Consumer is getting item");
-        productQueue.Take();
-        System.out.println("Consumer done");
-        System.out.println("---------------------------------------------------------------------------");
+        while(true) {
+            productQueue.take();
+            int timeSleep = ThreadLocalRandom.current().nextInt(6000, 10000);
+            try {
+                Thread.sleep(timeSleep);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Producer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
     
 }

@@ -5,6 +5,7 @@
  */
 package producer.consumer;
 
+import java.util.TimerTask;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -16,24 +17,28 @@ public class Main {
         ProductQueue<String> productQueue = new ProductQueue<>();
     
         Producer producer = new Producer(productQueue);
-        Consumer consumer = new Consumer(productQueue);
+        Consumer consumer1 = new Consumer(productQueue);
+        Consumer consumer2 = new Consumer(productQueue);
+        Consumer consumer3 = new Consumer(productQueue);
+        Consumer consumer4 = new Consumer(productQueue);
+
 
         Thread proThread = new Thread(producer);
+        Thread con1 = new Thread(consumer1);
+        Thread con2 = new Thread(consumer2);
+        Thread con3 = new Thread(consumer2);
+        Thread con4 = new Thread(consumer2);
+
+        con1.setName("Consumer 1");
+        con2.setName("Consumer 2");
+        con3.setName("Consumer 3");
+        con4.setName("Consumer 4");
         
         proThread.start();
-        for(int i=0; i<4; i++) {
-            new Thread(consumer).start();
-            Thread.sleep(1200);
-        }
+        con1.start();
+        con2.start();
+        con3.start();
+        con4.start();
         
-//        while(true) {
-//            new Thread(consumer).start();
-//            if(productQueue.getSizeItems()==0)
-//                Thread.sleep(ThreadLocalRandom.current().nextInt(2000,3000));
-//            else if(productQueue.getSizeItems()==productQueue.getCompacity())
-//                Thread.sleep(ThreadLocalRandom.current().nextInt(10000,15000));
-//            else
-//                Thread.sleep(ThreadLocalRandom.current().nextInt(3000,4500));
-//        }
     }
 }
