@@ -27,9 +27,9 @@ public class Producer implements Runnable {
     public void run() {
         while(true) {
             int number = ThreadLocalRandom.current().nextInt(1, 10);
-            productQueue.put("item " + number);
+            productQueue.put("item " + number, productQueue.getItems());
             try {
-                Thread.sleep(4000);
+                Thread.sleep(1500);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Producer.class.getName()).log(Level.SEVERE, null, ex);
             }

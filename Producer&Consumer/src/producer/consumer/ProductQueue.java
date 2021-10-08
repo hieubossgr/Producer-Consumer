@@ -20,7 +20,7 @@ public class ProductQueue<T> {
 
     public ProductQueue() {
         for(int i=1; i<=3; i++) {
-            items.add((T)("Number " + i));
+            items.add((T)("Item " + i));
         }
     }
     
@@ -41,38 +41,41 @@ public class ProductQueue<T> {
         this.compacity = compacity;
     }
     
-    public synchronized void put(T value) {
-        while(items.size() >= compacity) {
-            System.out.println("Queue fulled");
-            try {
-                wait();
-            } catch (InterruptedException ex) {
-                Logger.getLogger(ProductQueue.class.getName()).log(Level.SEVERE, null, ex);
+    public void put(T value, Queue<T> items) {
+        synchronized(items) {
+            if(items.size() >= compacity) {
+                System.out.println("Queue fulled");
+                try {
+                    items.wait();
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(ProductQueue.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
+            items.add(value);
+            System.out.println("Add " + value);
+            System.out.println("The number of products: " + getSizeItems());
+    //        System.out.println("Compacity of products: " + getCompacity());
+            System.out.println("---------------------------------------------------------------------------");
+            items.notify();
         }
-        items.add(value);
-        System.out.println("Add " + value);
-        System.out.println("The number of products: " + getSizeItems());
-//        System.out.println("Compacity of products: " + getCompacity());
-        System.out.println("---------------------------------------------------------------------------");
-
-        notifyAll();
     }
     
-    public synchronized void take() {
-        System.out.print(Thread.currentThread().getName() + " is handle: ");
-        while(items.size()==0) {
-            System.out.println("Queue empty");
-            try {
-                wait();
-            } catch (InterruptedException ex) {
-                Logger.getLogger(ProductQueue.class.getName()).log(Level.SEVERE, null, ex);
+    public void take(Queue<T> items) throws InterruptedException {
+        synchronized(items) {
+            System.out.println(Thread.currentThread().getName() + " is handling...");
+            if(items.size()==0) {
+                System.out.println("Queue empty");
+                try {
+                    items.wait();
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(ProductQueue.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
+            System.out.println("Remove " + items.poll() + " by " + Thread.currentThread().getName());
+            System.out.println("The number of products: " + getSizeItems());
+            System.out.println("---------------------------------------------------------------------------");
+            if(items.size()>0) items.notify();
         }
-        System.out.println("Remove " + items.poll());
-        System.out.println("The number of products: " + getSizeItems());
-        System.out.println("---------------------------------------------------------------------------");
-        notifyAll();
     }
     
     public int getSizeItems() {

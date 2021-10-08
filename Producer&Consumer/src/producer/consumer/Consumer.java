@@ -23,7 +23,11 @@ public class Consumer implements Runnable{
     @Override
     public void run() {
         while(true) {
-            productQueue.take();
+            try {
+                productQueue.take(productQueue.getItems());
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Consumer.class.getName()).log(Level.SEVERE, null, ex);
+            }
             int timeSleep = ThreadLocalRandom.current().nextInt(6000, 10000);
             try {
                 Thread.sleep(timeSleep);
